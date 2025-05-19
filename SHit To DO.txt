@@ -1,0 +1,7 @@
+1. steal code for loading data set from previous assignement
+2. make 3 clustering methods.
+3. 2 methods to pick number of classes
+4. do theme 1.
+5. create cool plots
+
+6. make powerpoint
