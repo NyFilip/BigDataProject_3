@@ -6,7 +6,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 # Load dataset
-
 catsanddogs = dataSet.catdog('catdogdata.txt')[0]
 labels_true = catsanddogs[0, :]
 images = catsanddogs[1:, :].T
@@ -32,20 +31,19 @@ def plot_clusters(data, labels, title):
     plt.tight_layout()
     plt.show()
 
-pca_cluster = PCA(n_components=30)
-images_reduced = pca_cluster.fit_transform(images)
+def perform_pca(data, n_components=30):
+    pca = PCA(n_components=n_components)
+    reduced_data = pca.fit_transform(data)
+    return reduced_data, pca
 
+# Perform PCA with 30 components on raw images
+images_reduced, pca_model = perform_pca(images, n_components=30)
+
+# Run DBSCAN on the PCA-reduced data
 predicted_labels = perform_dbscan(images_reduced, eps=1.5, min_samples=5)
 
-pca_vis = PCA(n_components=2)
-images_2d = pca_vis.fit_transform(images_reduced)
+# Further reduce to 2D for visualization
+images_2d, _ = perform_pca(images_reduced, n_components=2)
 
+# Plot clusters
 plot_clusters(images_2d, predicted_labels, "DBSCAN Clusters (PCA preprocessed)")
-
-plot_clusters(images_2d, labels_true, "Ground Truth (PCA projection)")
-
-print("Tuning eps for PCA-reduced data:")
-for eps in [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]:
-    labels = perform_dbscan(images_reduced, eps=eps, min_samples=5)
-    n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
-    print(f"eps={eps} → clusters found: {n_clusters}")
