@@ -4,7 +4,7 @@ import sklearn.cluster
 import dataSet
 import numpy as np
 import pandas as pd
-from sklearn.feature_selection import VarianceThreshold, mutual_info_classif
+from sklearn.feature_selection import VarianceThreshold, f_classif
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 def K_Elbow(images, k_range=range(1,10),random_state=0):
@@ -35,13 +35,40 @@ def select_by_pca(X, n_components=2):
     X_pca = pca.fit_transform(X)
     return X_pca, pca
 
+def FTestFeatureSelection(data, n_features,return_indices=False):
+    """
+    Perform F-test feature selection and return filtered dataset with labels.
+    
+    Parameters:
+        data (numpy.ndarray): Dataset with labels in the first column.
+        n_features (int): Number of top features to select based on F-statistic.
+    
+    Returns:
+        filtered_data (numpy.ndarray): Dataset with labels and selected features.
+    """
+    images = data[:, 1:]  # Features
+    labels = data[:, 0]   # Labels
+
+    f_values, _ = f_classif(images, labels)
+    # Get indices of the top n features based on F-statistic
+    top_features = np.argsort(f_values)[-n_features:]  # Select top n features
+    top_features = np.sort(top_features)  # Sort indices to maintain column order
+
+    # Filter the features and add labels back as the first column
+    filtered_features = images[:, top_features]
+    filtered_data = np.column_stack((labels, filtered_features))
+    if return_indices:
+        return filtered_data, top_features
+    return filtered_data
+
 
 castanddogs= dataSet.catdog('catdogdata.txt')[0]
 labels=castanddogs[0,:]
 images=castanddogs[1:,:]
 
-X_var, selected_indices = select_by_variance(images, threshold=0.01)
-X_pca, pca_model = select_by_pca(X_var, n_components=5)
+X_var, selected_indices = select_by_variance(images, threshold=0.000001)
+X_ftest=FTestFeatureSelection(X_var,100)
+X_pca, pca_model = select_by_pca(X_ftest, n_components=10)
 
 # Print selected feature indices and explained variance ratio
 print("Selected feature indices (variance):", selected_indices)
