@@ -23,7 +23,7 @@ def mnist(filePath = 'Numbers.txt'):
             labels.append(label)
             imagesMatrix.append(normArray)
             full.append(fullTemp)
-            imagesList.append(np.array(normArray).reshape(1,256))
+            imagesList.append(np.array(normArray).reshape(256))
     
     full = np.array(full)
     labels = np.array(labels)
