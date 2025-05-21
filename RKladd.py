@@ -9,9 +9,7 @@ from sklearn.datasets import make_blobs
 from sklearn.neighbors import NearestNeighbors
 
 def plot_k_distance(data, k=5):
-    """
-    Plot k-distance (distance to k-th nearest neighbor) to help choose DBSCAN eps.
-    """
+    # Plot k-distance (distance to k-th nearest neighbor) to help choose DBSCAN eps.
     data_scaled = StandardScaler().fit_transform(data)
     neighbors = NearestNeighbors(n_neighbors=k)
     neighbors_fit = neighbors.fit(data_scaled)
@@ -165,3 +163,4 @@ if __name__ == "__main__":
     plt.xlabel("PCA Component 1")
     plt.ylabel("PCA Component 2")
     plt.show()
+
