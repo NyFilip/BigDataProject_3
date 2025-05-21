@@ -28,7 +28,7 @@ def plot_k_distance(data, k=5):
     plt.show()
 
 # Load dataset
-
+"""
 catsanddogs = dataSet.catdog('catdogdata.txt')[0]
 labels_true = catsanddogs[0, :]
 images = catsanddogs[1:, :].T
@@ -36,7 +36,7 @@ images = catsanddogs[1:, :].T
 numbers_data = dataSet.mnist('Numbers.txt')[0]
 labels_true = numbers_data[0, :]
 images = numbers_data[1:, :].T
-"""
+
 
 def perform_dbscan(data, eps, min_samples=5):
     data_scaled = StandardScaler().fit_transform(data)
@@ -90,10 +90,10 @@ def test_stability(data, cluster_fn, labels_ref=None, n_iter=100, sample_frac=0.
 # Perform PCA with 30 components on raw images
 images_reduced, pca_model = perform_pca(images, n_components=30)
 
-plot_k_distance(images_reduced, k=5)  # or min_samples
+# plot_k_distance(images_reduced, k=5)  # or min_samples
 
 # Run DBSCAN on the PCA-reduced data
-predicted_labels = perform_dbscan(images_reduced, eps=2.8, min_samples=5)
+predicted_labels = perform_dbscan(images_reduced, eps=1.5, min_samples=5)
 
 # Further reduce to 2D for visualization
 #images_2d, _ = perform_pca(images_reduced, n_components=2)
@@ -102,5 +102,5 @@ predicted_labels = perform_dbscan(images_reduced, eps=2.8, min_samples=5)
 #plot_clusters(images_2d, predicted_labels, "DBSCAN Clusters (PCA preprocessed)")
 
 # Run stability test for DBSCAN
-dbscan_fn = lambda X: perform_dbscan(X, eps=2.8, min_samples=5)
+dbscan_fn = lambda X: perform_dbscan(X, eps=1.5, min_samples=5)
 test_stability(images_reduced, dbscan_fn, labels_ref=predicted_labels, title="DBSCAN Stability (ARI)")
