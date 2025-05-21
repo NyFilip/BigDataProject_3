@@ -28,4 +28,4 @@ if __name__ == '__main__':
     mImagesMatrix = mnistBirch()
     #print(cdImagesMatrix[4])
     #print(mImagesMatrix[6])
-    plt.show()
+    #plt.show()
