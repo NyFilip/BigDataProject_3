@@ -16,9 +16,9 @@ X_mnist = imagesList.squeeze()  # shape: (N, 256)
 k_range_Elbow=range(1,20)
 k_range_Silhoutte=range(2,20)
 #Elbow score for catdog:
-CatdoG_Elbow = H.K_Elbow(X_catdog, k_range_Elbow, random_state=42, plot=True)
+CatdoG_Elbow = F.K_Elbow(X_catdog, k_range_Elbow, random_state=42, plot=True)
 #Elbow score for mnist:
-Mnist_Elbow = H.K_Elbow(X_mnist, k_range_Elbow, random_state=42, plot=True)
+Mnist_Elbow = F.K_Elbow(X_mnist, k_range_Elbow, random_state=42, plot=True)
 #silhouette score for catdog:
 CatDog_Silhoutte = H.silhouette_kmeans_analysis(X_catdog, k_range_Silhoutte, title='Silhouette Score for CatDog', random_state=42, plot=True)
 #silhouette score for mnist:
