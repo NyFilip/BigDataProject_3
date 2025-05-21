@@ -4,6 +4,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import adjusted_rand_score
+from sklearn.datasets import make_blobs
 
 def perform_dbscan(data, eps, min_samples=5):
     data_scaled = StandardScaler().fit_transform(data)
@@ -28,7 +29,7 @@ def perform_pca(data, n_components=30):
 
 def test_stability(data, cluster_fn, labels_ref=None, n_iter=100, sample_frac=0.8, random_state=None, title="Clustering Stability"):
     
-    # Minimal resampling stability test for any clustering function.
+    # Resampling stability test for any clustering function.
     if random_state is not None:
         np.random.seed(random_state)
 
@@ -52,3 +53,39 @@ def test_stability(data, cluster_fn, labels_ref=None, n_iter=100, sample_frac=0.
     plt.show()
 
     print(f"Mean ARI: {np.mean(ari_scores):.3f} ± {np.std(ari_scores):.3f}")
+
+def generate_mnist_like_data(
+    n_clusters=10,
+    cluster_sizes=None,  # list of length n_clusters
+    n_features=50,       # higher dimension like MNIST (28x28=784)
+    cluster_std=1.0,
+    random_state=42
+):
+    if cluster_sizes is None:
+        total_samples = 10000
+        samples_per_cluster = total_samples // n_clusters
+        cluster_sizes = [samples_per_cluster] * n_clusters
+    else:
+        total_samples = sum(cluster_sizes)
+
+    X, y = [], []
+
+    # Spread cluster centers far apart for well-separated clusters
+    centers = np.random.RandomState(random_state).uniform(-20, 20, size=(n_clusters, n_features))
+
+    for i in range(n_clusters):
+        x_i, _ = make_blobs(
+            n_samples=cluster_sizes[i],
+            centers=[centers[i]],
+            cluster_std=cluster_std,
+            n_features=n_features,
+            random_state=random_state + i
+        )
+        X.append(x_i)
+        y.append(np.full(cluster_sizes[i], i))
+
+    X = np.vstack(X)
+    y = np.concatenate(y)
+    X = StandardScaler().fit_transform(X)  # normalize
+
+    return X, y
