@@ -46,7 +46,7 @@ def catdog(filePath = 'catdogdata.txt'):
             
             index = parts[0].strip()
             pixels = np.array(list(map(int,parts[1:])))
-            normPixels = (pixels + 1)/256
+            normPixels = (pixels+1)/256
 
 
             fullTemp = list(normPixels)
@@ -57,9 +57,9 @@ def catdog(filePath = 'catdogdata.txt'):
             full.append(fullTemp)
             i += 1
     full = np.array(full)
-    mean = np.mean(full[:,1])
-    print(full.shape)
-    full[:,1] = full[:,1] - mean
+    mean = np.mean(full[:,1:])
+    std = np.std(full[:,1:])
+    full[:,1:] = (full[:,1:] - mean)/std
 
     np.random.seed(10)
     np.random.shuffle(full)
