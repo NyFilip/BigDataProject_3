@@ -45,3 +45,36 @@ def silhouette_kmeans_analysis(
         plt.show()
 
     return sil_scores
+
+def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', plot=True):
+    """
+    Compute and optionally plot the inertia values for a range of k in KMeans.
+
+    Parameters:
+        images (array-like): The input data.
+        k_range (range): Range of cluster counts to try.
+        random_state (int): Random seed for reproducibility.
+        title (str): Title for the plot.
+        plot (bool): Whether to show the plot.
+
+    Returns:
+        list: Inertia values for each k.
+    """
+    inertias = []
+
+    for k in k_range:
+        model = KMeans(n_clusters=k, random_state=random_state)
+        model.fit(images)
+        inertias.append(model.inertia_)
+
+    if plot:
+        plt.figure(figsize=(6, 4))
+        plt.plot(k_range, inertias, marker='o')
+        plt.xlabel('Number of Clusters (k)')
+        plt.ylabel('Inertia')
+        plt.title(title)
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+    return inertias

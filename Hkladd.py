@@ -1,10 +1,14 @@
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-
+import dataSet as DS
+import Nkod as na
+import Fkod as fk
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-
+from sklearn.feature_selection import VarianceThreshold, f_classif
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 def mnist(filePath = 'Numbers.txt'):
     imagesList = []
     imagesMatrix = []
@@ -85,6 +89,13 @@ def visMnist(mMatrix):
     for i in range(16):
         axs[int(np.floor((i)/4)),(i)%4].matshow(mMatrix[np.random.randint(0, high=2000)])
     plt.show()
+
+def select_by_pca(X, n_components=2):
+    pca = PCA(n_components=n_components)
+    X_pca = pca.fit_transform(X)
+    return X_pca, pca
+
+
 
 '''# Load MNIST data
 _, _, imagesMatrix, imagesList = mnist()
