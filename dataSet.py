@@ -14,21 +14,25 @@ def mnist(filePath = 'Numbers.txt'):
             index = parts[0].strip()
             label = np.array(int(parts[1]))
             fullTemp  = np.array(list(map(float,parts[1:])))
-            pixels = list(map(float,parts[2:]))
+            pixels = np.array(list(map(float,parts[2:])))
             
-            pixelArray = np.array(pixels).reshape(16,16)
-            normArray = (pixelArray + 1) / 2
+            #pixelArray = np.array(pixels).reshape(16,16)
+            normArray = (pixels + 1) / 2
               
             
             labels.append(label)
             imagesMatrix.append(normArray)
             full.append(fullTemp)
-            imagesList.append(np.array(normArray).reshape(256))
+            #imagesList.append(np.array(normArray).reshape(256))
     
     full = np.array(full)
+    mean = np.mean(full[:,1:])
+    std = np.std(full[:,1:])
+    full[:,1:] = (full[:,1:] - mean)/std
+
     labels = np.array(labels)
-    imagesMatrix = np.array(imagesMatrix)
-    imagesList = np.array(imagesList)                    
+    imagesMatrix = np.array(full[:,1:])
+    imagesList = np.array(full[:,1:])                    
     return full, labels, imagesMatrix, imagesList
             
 def catdog(filePath = 'catdogdata.txt'):
