@@ -29,8 +29,7 @@ def mnist(filePath = 'Numbers.txt'):
     mean = np.mean(full[:,1:])
     std = np.std(full[:,1:])
     full[:,1:] = (full[:,1:] - mean)/std
-    print(np.std(full[:,1:]))
-    print(np.mean(full[:,1:]))
+
     labels = np.array(labels)
     imagesMatrix = np.array(full[:,1:])
     imagesList = np.array(full[:,1:])                    

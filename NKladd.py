@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import dataSet as ds
 import Nkod as na
-import Fkod as fk
+
 
 np.set_printoptions(threshold=np.inf)
 
@@ -24,7 +24,7 @@ def mnistBirch():
 
 
 if __name__ == '__main__':
-    cdImagesMatrix = catdogBirch()
-    mFull = mnistBirch()
+    cdImagesMatrix = na.catdogBirch()
+    mFull = na.mnistBirch()
 
     plt.show()
