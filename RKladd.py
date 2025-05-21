@@ -85,12 +85,23 @@ def test_stability(data, cluster_fn, labels_ref=None, n_iter=100, sample_frac=0.
 
 
 # Perform PCA with 30 components on raw images
-images_reduced, pca_model = perform_pca(images, n_components=30)
+images_reduced, pca_model = perform_pca(images, n_components=10)
 
 # plot_k_distance(images_reduced, k=5)  # or min_samples
 
 # Run DBSCAN on the PCA-reduced data
 predicted_labels = perform_dbscan(images_reduced, eps=1.5, min_samples=5)
+
+labels = perform_dbscan(images_reduced, eps=1.5, min_samples=5)
+unique_labels = set(labels)
+n_clusters = len(unique_labels - {-1})
+n_noise = list(labels).count(-1)
+
+if n_clusters == 0:
+    print("⚠️ Warning: DBSCAN found no clusters (only noise).")
+else:
+    print(f"✅ DBSCAN found {n_clusters} clusters and {n_noise} noise points.")
+
 
 # Further reduce to 2D for visualization
 #images_2d, _ = perform_pca(images_reduced, n_components=2)
@@ -164,3 +175,9 @@ if __name__ == "__main__":
     plt.ylabel("PCA Component 2")
     plt.show()
 
+
+
+for eps in [1.6, 1.8, 2.0, 2.2]:
+    labels = perform_dbscan(images_reduced, eps=eps, min_samples=5)
+    n_clusters = len(set(labels) - {-1})
+    print(f"eps={eps} → clusters: {n_clusters}")
