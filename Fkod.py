@@ -5,7 +5,9 @@ import sklearn.cluster
 from sklearn.feature_selection import VarianceThreshold, f_classif
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-def K_Elbow(images, k_range=range(1,10),random_state=0):
+
+from sklearn.manifold import TSNE
+def K_Elbow(images, k_range=range(1,20),random_state=0):
 
 
     inertias = []
@@ -58,3 +60,56 @@ def FTestFeatureSelection(data, n_features=100,return_indices=False):
     if return_indices:
         return filtered_data, top_features
     return filtered_data
+
+
+def select_by_TSNE(
+    X: np.ndarray,
+    n_components: int = 2,
+    perplexity: float = 30.0,
+    learning_rate: float = 200.0,
+    n_iter: int = 1000,
+    random_state: int = 42,
+    **kwargs
+) -> np.ndarray:
+    """
+    Reduce dimensionality of flattened images via t-SNE.
+
+    Parameters
+    ----------
+    X : np.ndarray, shape (n_samples, n_features)
+        Input data where each row is a flattened image.
+    n_components : int, default=2
+        Target number of dimensions.
+    perplexity : float, default=30.0
+        The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms.
+    learning_rate : float, default=200.0
+        The learning rate for t-SNE optimization.
+    n_iter : int, default=1000
+        Maximum number of iterations for the optimization.
+    random_state : int, default=42
+        Seed for reproducibility.
+    **kwargs : dict
+        Any additional keyword arguments to pass to sklearn.manifold.TSNE.
+
+    Returns
+    -------
+    embedding : np.ndarray, shape (n_samples, n_components)
+        The t-SNE embedding of the input data.
+    """
+    # Validate input
+    if not isinstance(X, np.ndarray):
+        raise ValueError("X must be a numpy array")
+    if X.ndim != 2:
+        raise ValueError("X must be 2D: shape (n_samples, n_features)")
+
+    tsne = TSNE(
+        n_components=n_components,
+        perplexity=perplexity,
+        learning_rate=learning_rate,
+        n_iter=n_iter,
+        random_state=random_state,
+        **kwargs
+    )
+    embedding = tsne.fit_transform(X)
+    return embedding
+
