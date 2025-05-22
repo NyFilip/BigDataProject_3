@@ -44,10 +44,21 @@ Find_number_of_classes(X_catdog,X_mnist)
 
 catdog_birch_labels,catdog_birch_distance=N.catdogBirch()
 catdog_Kmeans_labels,catdog_Kmeans_distance =F.catdog_Kmeans()
-# catdog_DBSCAN_labels,catdog_DBSCAN_disctance =R.catdogDbscan()
+catdog_DBSCAN_labels,catdog_DBSCAN_distance =R.catdogDbscan()
+
+mnist_birch_labels,mnist_birch_distance=N.mnistBirch()
+mnist_Kmeans_labels,mnist_Kmeans_distance =F.mnist_Kmeans()
+mnist_DBSCAN_labels,mnist_DBSCAN_distance =R.mnistDbscan()
 
 N.truePredPlot(X_catdog,catdog_labels,catdog_birch_distance,catdog_birch_labels)
 N.truePredPlot(X_catdog,catdog_labels,catdog_Kmeans_distance,catdog_Kmeans_labels)
+N.truePredPlot(X_catdog,catdog_labels,catdog_DBSCAN_distance,catdog_DBSCAN_labels)
+
+N.truePredPlot(X_mnist,mnist_labels,mnist_birch_distance,mnist_birch_labels)
+N.truePredPlot(X_mnist,mnist_labels,mnist_Kmeans_distance,mnist_Kmeans_labels)
+N.truePredPlot(X_mnist,mnist_labels,mnist_DBSCAN_distance,mnist_DBSCAN_labels)
+
+
 plt.show()
 
 # F.evaluate_clustering(catdog_labels,catdog_birch_labels)

@@ -188,7 +188,8 @@ def mnist_Kmeans():
     kmeans = KMeans(n_clusters=9, random_state=0)
 
     labels = kmeans.fit_predict(X_pca)
-    return labels
+    distance =kmeans.fit_transform(X_pca)
+    return labels, distance
 
 import numpy as np
 import matplotlib.pyplot as plt
