@@ -40,8 +40,6 @@ def run_experiment(data, labels_true, name, eps_values, min_samples_list, pca_co
         title=f"{name} - Clustering Stability"
     )
 
-
-
 if __name__ == "__main__":
     # Load MNIST-like dataset
     from dataSet import mnist, catdog
@@ -54,10 +52,10 @@ if __name__ == "__main__":
     print(f"Cat-Dog data shape: {catdog_list.shape}")
 
     # Parameter ranges
-    eps_values = [1.5, 2.0, 2.5]
-    min_samples_list = [3, 5, 10]
-    pca_components_list = [2, 10, 30]
+    eps_values = np.arange(2.5, 3.6, 0.1)   # finer search between 2.5 and 3.5
+    min_samples_list = [2, 3, 4, 5, 6, 7, 8]
+    pca_components_list = [20, 25, 30, 35, 40]  # slightly extended around 30
 
     # Run experiments
-    run_experiment(mnist_list, mnist_labels, "MNIST-like", eps_values, min_samples_list, pca_components_list)
-    run_experiment(catdog_list, catdog_labels, "Cat-Dog", eps_values, min_samples_list, pca_components_list)
+    run_experiment(mnist_list, mnist_labels, "MNIST-like", 1.5, 10, 20)
+    run_experiment(catdog_list, catdog_labels, "Cat-Dog", 1.5, 10, 20)
