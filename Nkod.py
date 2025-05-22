@@ -17,24 +17,24 @@ def birch(dataset, labels, thresh = 0.5):
     #print(dataset.shape)
     setLength = len(distance[1])
     
-    plt.figure()
-    plt.scatter(dataset[:setLength,0], distance[:setLength,1], c=prediction[:setLength], marker='o')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.title('Birch Clustering')
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(dataset[:setLength,0], distance[:setLength,1], c=labels[:setLength], marker='o')
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    ax.set_title('Birch Clustering')
     
     return prediction, distance
 
 def catdogBirch():
     cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
-    cdFtest = fk.FTestFeatureSelection(cdImagesList, 70)
-    cdpca_X, cdpca = fk.select_by_pca(cdFtest, 2)
-    cdpred, cddist = birch(cdpca_X, cdLabels, 0.3)
+    cdFtest = fk.FTestFeatureSelection(cdFull[:,1:], 768)
+    cdpca_X, cdpca = fk.select_by_pca(cdFtest, 12)
+    cdpred, cddist = birch(cdpca_X, cdLabels, .1)
     return cdFull
 
 def mnistBirch():
     mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
-    mFtest = fk.FTestFeatureSelection(mImagesList, 250)
-    mpca_X, mpca = fk.select_by_pca(mFtest, 2)
-    mpred, mdist = birch(mpca_X, mLabels, 0.6)
+    mFtest = fk.FTestFeatureSelection(mFull[:,1:], 150)
+    mpca_X, mpca = fk.select_by_pca(mFtest, 12)
+    mpred, mdist = birch(mpca_X, mLabels, 1.7)
     return mFull
