@@ -1,7 +1,10 @@
-1. steal code for loading data set from previous assignement
-2. make 3 clustering methods.
-3. 2 methods to pick number of classes
-4. do theme 1.
-5. create cool plots
+1. steal code for loading data set from previous assignement Filip Done!
+2. make 3 clustering methods. Kmeans Filip, DBSCAN REbecka, BIRCH Natanael Klar!
+3. 2 methods to pick number of classes KElbow Filip Klar, Siloute Nils Klar!
+4. pertubationer and shit, Resample Rebecka, test stabilty
 
-6. make powerpoint
+5. do theme 1 Rebecka 
+6. create cool plots
+
+7. make powerpoint
+

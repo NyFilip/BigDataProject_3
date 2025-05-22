@@ -5,6 +5,7 @@ import Rkod as R
 import dataSet as DS
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
 # Load CatDog data
 _, catdog_labels, sImagesMatrix, sImagesList = DS.catdog()
 X_catdog = sImagesList  # shape: (198, 4096
@@ -41,11 +42,13 @@ def Find_number_of_classes(X_catdog,X_mnist):
 
 # catdog
 
-catdog_birch_labels,_=N.catdogBirch()
-catdog_Kmeans_labels =F.catdog_Kmeans()
-catdog_DBSCAN_labels =R.catdogDbscan()
+catdog_birch_labels,catdog_birch_distance=N.catdogBirch()
+catdog_Kmeans_labels,catdog_Kmeans_distance =F.catdog_Kmeans()
+# catdog_DBSCAN_labels,catdog_DBSCAN_disctance =R.catdogDbscan()
 
-F.visualize_tsne(X_catdog,catdog_labels)
+N.truePredPlot(X_catdog,catdog_labels,catdog_birch_distance,catdog_birch_labels)
+N.truePredPlot(X_catdog,catdog_labels,catdog_Kmeans_distance,catdog_Kmeans_labels)
+plt.show()
 
 # F.evaluate_clustering(catdog_labels,catdog_birch_labels)
 # F.evaluate_clustering(catdog_labels,catdog_Kmeans_labels)
