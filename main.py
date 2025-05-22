@@ -35,7 +35,7 @@ def Find_number_of_classes(X_catdog,X_mnist):
     print("Elbow Score for CatDog: ", CatdoG_Elbow)
     print("Elbow Score for MNIST: ", Mnist_Elbow)
 
-if __name__ == '__main':
+if __name__ == '__main__':
     Find_number_of_classes(X_catdog,X_mnist)
 
     #getting labels from classifiers.
