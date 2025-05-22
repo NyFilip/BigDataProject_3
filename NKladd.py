@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import Birch
 import dataSet as ds
 import Nkod as na
+import Rkod as re
 
 
 np.set_printoptions(threshold=np.inf)
@@ -12,7 +13,16 @@ np.set_printoptions(threshold=np.inf)
 
 
 if __name__ == '__main__':
+    mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
+    cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
+
     cdPred, cdDist = na.catdogBirch()
     mPred, mDist = na.mnistBirch()
+    
+    mSil = re.evaluate_clustering(mFull[:,1:], mPred, mLabels)
+    cdSil = re.evaluate_clustering(cdFull[:,1:], cdPred, cdLabels)
+    
+    print(f'{mSil=}')
+    print(f'{cdSil=}')
 
     plt.show()
