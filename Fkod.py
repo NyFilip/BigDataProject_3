@@ -1,13 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sklearn.cluster
-
+from sklearn.manifold import TSNE
 from sklearn.feature_selection import VarianceThreshold, f_classif
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', plot=True):
+def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', plot=True, return_distortion=False):
     """
-    Compute and optionally plot the inertia values for a range of k in KMeans.
+    Compute and optionally plot the inertia or distortion values for a range of k in KMeans.
 
     Parameters:
         images (array-like): The input data.
@@ -15,28 +15,57 @@ def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', 
         random_state (int): Random seed for reproducibility.
         title (str): Title for the plot.
         plot (bool): Whether to show the plot.
+        return_distortion (bool): If True, return average distortion (mean distance to closest cluster center) instead of inertia.
 
     Returns:
-        list: Inertia values for each k.
+        list: Inertia or distortion values for each k.
     """
-    inertias = []
+    values = []
 
     for k in k_range:
         model = KMeans(n_clusters=k, random_state=random_state)
         model.fit(images)
-        inertias.append(model.inertia_)
+        if return_distortion:
+            # Compute mean distance to closest cluster center (distortion)
+            distances = np.min(model.transform(images), axis=1)
+            distortion = np.mean(distances)
+            values.append(distortion)
+        else:
+            # Inertia (sum of squared distances to closest cluster center)
+            values.append(model.inertia_)
 
     if plot:
         plt.figure(figsize=(6, 4))
-        plt.plot(k_range, inertias, marker='o')
+        ylabel = 'Distortion' if return_distortion else 'Inertia'
+        plt.plot(k_range, values, marker='o')
         plt.xlabel('Number of Clusters (k)')
-        plt.ylabel('Inertia')
+        plt.ylabel(ylabel)
         plt.title(title)
         plt.grid(True)
         plt.tight_layout()
         plt.show()
 
-    return inertias
+    return values
+
+def run_kmeans(X, n_clusters=3, random_state=0):
+    """
+    Perform KMeans clustering on the dataset X.
+
+    Parameters:
+        X (array-like): Data matrix (samples x features).
+        n_clusters (int): Number of clusters.
+        random_state (int): Random seed for reproducibility.
+
+    Returns:
+        labels (ndarray): Cluster labels for each sample.
+        model (KMeans): Fitted KMeans model.
+    """
+    from sklearn.cluster import KMeans
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_state)
+    labels = kmeans.fit_predict(X)
+    return labels
+
+
 
 def select_by_variance(X, threshold=0.1):
     selector = VarianceThreshold(threshold=threshold)
@@ -47,6 +76,39 @@ def select_by_pca(X, n_components=2):
     pca = PCA(n_components=n_components)
     X_pca = pca.fit_transform(X)
     return X_pca, pca
+
+def Select_by_tsne(
+    X: np.ndarray,
+    n_components: int = 2,
+    perplexity: float = 30.0,
+    learning_rate: float = 200.0,
+    n_iter: int = 1000,
+    random_state: int = 42,
+    **kwargs
+) -> np.ndarray:
+    """
+    Reduce dimensionality of flattened images via t-SNE.
+
+    Automatically uses 'exact' method if n_components > 3.
+    """
+    if not isinstance(X, np.ndarray):
+        raise ValueError("X must be a numpy array")
+    if X.ndim != 2:
+        raise ValueError("X must be 2D: shape (n_samples, n_features)")
+
+    method = kwargs.pop("method", "barnes_hut" if n_components <= 3 else "exact")
+
+    tsne = TSNE(
+        n_components=n_components,
+        perplexity=perplexity,
+        learning_rate=learning_rate,
+        max_iter=n_iter,
+        random_state=random_state,
+        method=method,
+        **kwargs
+    )
+    return tsne.fit_transform(X)
+
 
 def FTestFeatureSelection(data, n_features=100,return_indices=False):
     """
@@ -73,3 +135,25 @@ def FTestFeatureSelection(data, n_features=100,return_indices=False):
     if return_indices:
         return filtered_data, top_features
     return filtered_data
+
+def evaluate_clustering(y_true, y_pred):
+    from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score, confusion_matrix
+    import numpy as np
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+
+    ari = adjusted_rand_score(y_true, y_pred)
+    nmi = normalized_mutual_info_score(y_true, y_pred, average_method='arithmetic')
+    cm  = confusion_matrix(y_true, y_pred)
+    purity = np.sum(np.max(cm, axis=1)) / np.sum(cm)
+
+    print(f"ARI  : {ari:.3f}")
+    print(f"NMI  : {nmi:.3f}")
+    print(f"Purity: {purity:.3f}")
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=True)
+    plt.title("Confusion Matrix")
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.show()

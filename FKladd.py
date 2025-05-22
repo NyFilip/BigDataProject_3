@@ -9,6 +9,8 @@ import Fkod
 def evaluate_clustering(y_true, y_pred):
     from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score, confusion_matrix
     import numpy as np
+    import seaborn as sns
+    import matplotlib.pyplot as plt
 
     ari = adjusted_rand_score(y_true, y_pred)
     nmi = normalized_mutual_info_score(y_true, y_pred, average_method='arithmetic')
@@ -18,7 +20,13 @@ def evaluate_clustering(y_true, y_pred):
     print(f"ARI  : {ari:.3f}")
     print(f"NMI  : {nmi:.3f}")
     print(f"Purity: {purity:.3f}")
-    print("Confusion matrix:\n", cm)
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=True)
+    plt.title("Confusion Matrix")
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.show()
 import numpy as np
 from sklearn.manifold import TSNE
 
@@ -34,33 +42,14 @@ def tsne_embed(
     """
     Reduce dimensionality of flattened images via t-SNE.
 
-    Parameters
-    ----------
-    X : np.ndarray, shape (n_samples, n_features)
-        Input data where each row is a flattened image.
-    n_components : int, default=2
-        Target number of dimensions.
-    perplexity : float, default=30.0
-        The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms.
-    learning_rate : float, default=200.0
-        The learning rate for t-SNE optimization.
-    n_iter : int, default=1000
-        Maximum number of iterations for the optimization.
-    random_state : int, default=42
-        Seed for reproducibility.
-    **kwargs : dict
-        Any additional keyword arguments to pass to sklearn.manifold.TSNE.
-
-    Returns
-    -------
-    embedding : np.ndarray, shape (n_samples, n_components)
-        The t-SNE embedding of the input data.
+    Automatically uses 'exact' method if n_components > 3.
     """
-    # Validate input
     if not isinstance(X, np.ndarray):
         raise ValueError("X must be a numpy array")
     if X.ndim != 2:
         raise ValueError("X must be 2D: shape (n_samples, n_features)")
+
+    method = kwargs.pop("method", "barnes_hut" if n_components <= 3 else "exact")
 
     tsne = TSNE(
         n_components=n_components,
@@ -68,11 +57,10 @@ def tsne_embed(
         learning_rate=learning_rate,
         n_iter=n_iter,
         random_state=random_state,
+        method=method,
         **kwargs
     )
-    embedding = tsne.fit_transform(X)
-    return embedding
-
+    return tsne.fit_transform(X)
 
 castanddogs= dataSet.catdog('catdogdata.txt')[0]
 castanddogs= dataSet.mnist('numbers.txt')[0]
@@ -84,7 +72,7 @@ X_ftest=Fkod.FTestFeatureSelection(X_var,100)
 X_pca, pca_model = Fkod.select_by_pca(images, n_components=80)
 
 
-Y = tsne_embed(images, n_components=2, perplexity=40, n_iter=500)
+Y = tsne_embed(images, n_components=10, perplexity=40, n_iter=500)
 
 # Quick scatter plot
 plt.scatter(Y[:, 0], Y[:, 1])
