@@ -80,13 +80,13 @@ for size in sample_sizes:
     results['Birch']['silhouette'].append(silhouette_score(X, y_birch))
     results['Birch']['n_clusters'].append(len(np.unique(y_birch)))
 
-# --- Plot clustering results across sample sizes ---
-plt.figure(figsize=(15, 5))
+# --- Plot clustering results across sample sizes (separate images, high quality) ---
 colors = {'KMeans': 'tab:orange', 'DBSCAN': 'tab:blue', 'Birch': 'tab:green'}
 markers = {'KMeans': 's', 'DBSCAN': 'o', 'Birch': '^'}
+metrics = ['ari', 'silhouette', 'n_clusters']
 
-for i, metric in enumerate(['ari', 'silhouette', 'n_clusters']):
-    plt.subplot(1, 3, i + 1)
+for metric in metrics:
+    plt.figure(figsize=(7, 5))
     for alg in results:
         y = results[alg][metric]
         plt.plot(
@@ -96,17 +96,16 @@ for i, metric in enumerate(['ari', 'silhouette', 'n_clusters']):
         plt.scatter(sample_sizes, y, color=colors[alg], marker=markers[alg], s=80)
     plt.xlabel('Sample Size')
     plt.ylabel(metric.replace('_', ' ').title())
-    plt.title(metric.replace('_', ' ').title())
+    plt.title(f"{metric.replace('_', ' ').title()} vs Sample Size")
     plt.xscale('log')
     plt.grid(True, linestyle='--', alpha=0.6)
-    if i == 0:
+    if metric == 'ari':
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout(rect=[0, 0, 0.85, 1])
+    plt.savefig(f"part_two/{metric}_results.png", bbox_inches="tight", dpi=300)
+    plt.close()
 
-plt.tight_layout(rect=[0, 0, 0.85, 1])
-plt.savefig("part_two/clustering_results.png", bbox_inches="tight")
-plt.show()
-
-# --- DBSCAN k-distance plot for tuning eps ---
+# --- DBSCAN k-distance plot for tuning eps (high quality) ---
 k = 5  # min_samples for DBSCAN
 nbrs = NearestNeighbors(n_neighbors=k).fit(X_full)
 distances, indices = nbrs.kneighbors(X_full)
@@ -118,5 +117,6 @@ plt.ylabel(f"{k}-NN distance")
 plt.xlabel("Points sorted by distance")
 plt.title("DBSCAN k-distance plot (use elbow as eps)")
 plt.grid(True)
-plt.savefig("part_two/dbscan_k_distance_plot.png", bbox_inches="tight")
-plt.show()
+plt.tight_layout()
+plt.savefig("part_two/dbscan_k_distance_plot.png", bbox_inches="tight", dpi=300)
+plt.close()

@@ -56,14 +56,16 @@ for ratio in imbalance_ratios:
     results['Birch']['silhouette'].append(silhouette_score(X, y_birch))
     results['Birch']['n_clusters'].append(len(np.unique(y_birch)))
 
-# --- Plotting ---
-plt.figure(figsize=(15, 5))
+# --- Plotting (separate high-quality images for each metric) ---
 colors = {'KMeans': 'tab:orange', 'DBSCAN': 'tab:blue', 'Birch': 'tab:green'}
 markers = {'KMeans': 's', 'DBSCAN': 'o', 'Birch': '^'}
 xlabels = [f"1:{r}" for r in imbalance_ratios]
+metrics = ['ari', 'silhouette', 'n_clusters']
 
-for i, metric in enumerate(['ari', 'silhouette', 'n_clusters']):
-    plt.subplot(1, 3, i+1)
+os.makedirs("part_two", exist_ok=True)
+
+for metric in metrics:
+    plt.figure(figsize=(7, 5))
     for alg in results:
         y = np.array(results[alg][metric], dtype=np.float64)
         plt.plot(
@@ -73,12 +75,10 @@ for i, metric in enumerate(['ari', 'silhouette', 'n_clusters']):
         plt.scatter(xlabels, y, color=colors[alg], marker=markers[alg], s=80)
     plt.xlabel('Cluster Size Ratio (smallest:largest)')
     plt.ylabel(metric.replace('_', ' ').title())
-    plt.title(metric.replace('_', ' ').title())
+    plt.title(f"{metric.replace('_', ' ').title()} vs Cluster Size Imbalance")
     plt.grid(True, linestyle='--', alpha=0.6)
-    if i == 0:
+    if metric == 'ari':
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-plt.tight_layout(rect=[0, 0, 0.85, 1])
-
-os.makedirs("part_two", exist_ok=True)
-plt.savefig("part_two/cluster_imbalance_results.png", bbox_inches="tight")
-plt.show()
+    plt.tight_layout(rect=[0, 0, 0.85, 1])
+    plt.savefig(f"part_two/imbalance_{metric}_results.png", bbox_inches="tight", dpi=300)
+    plt.close()
