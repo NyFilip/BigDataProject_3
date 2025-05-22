@@ -6,17 +6,17 @@ import dataSet as DS
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 # Load CatDog data
-_, _, sImagesMatrix, sImagesList = DS.catdog()
+_, catdog_labels, sImagesMatrix, sImagesList = DS.catdog()
 X_catdog = sImagesList  # shape: (198, 4096
-_, _, imagesMatrix, imagesList = DS.mnist()
+_, mnist_labels, imagesMatrix, imagesList = DS.mnist()
 X_mnist = imagesList.squeeze()  # shape: (N, 256)
 
 # Filer data 
 
-X_mnist_PCA,_=F.select_by_pca(X_mnist,n_components=30)
-X_catdog_PCA,_=F.select_by_pca(X_catdog,n_components=30)
 
-X_mnist_TSNE=F.Select_by_tsne(X_mnist_PCA,perplexity=30,learning_rate=200,n_iter=1000)
+X_catdog_PCA,_=F.select_by_pca(X_catdog,n_components=198)
+
+# X_mnist_TSNE=F.Select_by_tsne(X_mnist_PCA,perplexity=30,learning_rate=200,n_iter=1000)
 X_catdog_TSNE=F.Select_by_tsne(X_catdog_PCA,perplexity=30,learning_rate=200,n_iter=1000)
 
 def Find_number_of_classes(X_catdog,X_mnist):
@@ -40,9 +40,15 @@ def Find_number_of_classes(X_catdog,X_mnist):
 
 # Find_number_of_classes(X_catdog_PCA,X_mnist)
 
-## Cluster the data
+#getting labels from classifiers.
 
-kMeans_mnist_labels= F.run_kmeans(X_mnist_TSNE,clusters=9)
-kMeans_catdog_labels=F.run_kmeans()
-birch_labels=N.birch()
+# catdog
+
+catdog_birch_labels,_=N.catdogBirch()
+catdog_Kmeans_labels =F.catdog_Kmeans()
+catdog_DBSCAN_labels =R.cat
+
+
+# F.evaluate_clustering(y_true=mnist_labels,y_pred=kMeans_mnist_labels)
+
 

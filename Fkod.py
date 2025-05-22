@@ -5,6 +5,8 @@ from sklearn.manifold import TSNE
 from sklearn.feature_selection import VarianceThreshold, f_classif
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+import dataSet as DS
+import FKladd as FK
 def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', plot=True, return_distortion=False):
     """
     Compute and optionally plot the inertia or distortion values for a range of k in KMeans.
@@ -157,3 +159,35 @@ def evaluate_clustering(y_true, y_pred):
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     plt.show()
+
+def catdog_Kmeans():
+
+
+    _, catdog_labels, sImagesMatrix, sImagesList = DS.catdog()
+    X_catdog = sImagesList  # shape: (198, 4096
+
+    
+
+    pca = PCA(n_components=4)
+    X_pca = pca.fit_transform(X_catdog)
+    kmeans = KMeans(n_clusters=2, random_state=0)
+
+    labels = kmeans.fit_predict(X_pca)
+    return labels
+
+def mnist_Kmeans():
+    
+    _, mnist_labels, sImagesMatrix, sImagesList = DS.mnist()
+    X_catdog = sImagesList  # shape: (198, 4096
+
+    
+
+    pca = PCA(n_components=26)
+    X_pca = pca.fit_transform(X_catdog)
+    kmeans = KMeans(n_clusters=9, random_state=0)
+
+    labels = kmeans.fit_predict(X_pca)
+    return labels
+_, mnist_labels, imagesMatrix, imagesList = DS.mnist()
+X_mnist = imagesList.squeeze()  # shape: (N, 256)
+
