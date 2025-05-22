@@ -176,7 +176,7 @@ def catdog_Kmeans():
     return labels
 
 def mnist_Kmeans():
-    
+
     _, mnist_labels, sImagesMatrix, sImagesList = DS.mnist()
     X_catdog = sImagesList  # shape: (198, 4096
 
@@ -188,6 +188,60 @@ def mnist_Kmeans():
 
     labels = kmeans.fit_predict(X_pca)
     return labels
-_, mnist_labels, imagesMatrix, imagesList = DS.mnist()
-X_mnist = imagesList.squeeze()  # shape: (N, 256)
 
+def visualize_tsne(X, y, pca_components=50, tsne_components=2, perplexity=30, random_state=42):
+    """
+    Visualize data using PCA (for initial reduction) followed by t-SNE, colored by true labels.
+
+    Parameters:
+        X (ndarray): Data matrix (samples x features)
+        y (ndarray): True labels
+        pca_components (int): Number of PCA components to keep before t-SNE
+        tsne_components (int): Number of t-SNE output dimensions (usually 2)
+        perplexity (float): t-SNE perplexity parameter
+        random_state (int): Random seed for reproducibility
+    """
+    from sklearn.decomposition import PCA
+    from sklearn.manifold import TSNE
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import matplotlib
+
+    # Step 1: PCA reduction
+    pca = PCA(n_components=pca_components, random_state=random_state)
+    X_pca = pca.fit_transform(X)
+
+    # Step 2: t-SNE reduction
+    tsne = TSNE(n_components=tsne_components, perplexity=perplexity, random_state=random_state)
+    X_tsne = tsne.fit_transform(X_pca)
+
+    # Step 3: Prepare colors for unique labels
+    unique_labels = np.unique(y)
+    n_labels = len(unique_labels)
+    # Use tab10 or tab20 if possible, otherwise use hsv
+    if n_labels <= 10:
+        cmap = plt.get_cmap('tab10', n_labels)
+    elif n_labels <= 20:
+        cmap = plt.get_cmap('tab20', n_labels)
+    else:
+        cmap = plt.get_cmap('hsv', n_labels)
+
+    # Step 4: Scatter plot
+    plt.figure(figsize=(8, 6))
+    scatter = plt.scatter(
+        X_tsne[:, 0], X_tsne[:, 1],
+        c=y, cmap=cmap, s=40, alpha=0.8
+    )
+    plt.title("t-SNE visualization (after PCA)")
+    plt.xlabel("t-SNE 1")
+    plt.ylabel("t-SNE 2")
+    cbar = plt.colorbar(scatter, ticks=range(n_labels))
+    cbar.set_label("True Label")
+    cbar.set_ticks(range(n_labels))
+    cbar.set_ticklabels(unique_labels)
+    plt.tight_layout()
+    plt.show()
+
+
+
+    

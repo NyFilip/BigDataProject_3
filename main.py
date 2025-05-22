@@ -11,13 +11,10 @@ X_catdog = sImagesList  # shape: (198, 4096
 _, mnist_labels, imagesMatrix, imagesList = DS.mnist()
 X_mnist = imagesList.squeeze()  # shape: (N, 256)
 
-# Filer data 
 
 
-X_catdog_PCA,_=F.select_by_pca(X_catdog,n_components=198)
 
-# X_mnist_TSNE=F.Select_by_tsne(X_mnist_PCA,perplexity=30,learning_rate=200,n_iter=1000)
-X_catdog_TSNE=F.Select_by_tsne(X_catdog_PCA,perplexity=30,learning_rate=200,n_iter=1000)
+
 
 def Find_number_of_classes(X_catdog,X_mnist):
 # find the best number of clusters for the datasets
@@ -46,9 +43,23 @@ def Find_number_of_classes(X_catdog,X_mnist):
 
 catdog_birch_labels,_=N.catdogBirch()
 catdog_Kmeans_labels =F.catdog_Kmeans()
-catdog_DBSCAN_labels =R.cat
+catdog_DBSCAN_labels =R.catdogDbscan()
 
+F.visualize_tsne(X_catdog,catdog_labels)
 
+# F.evaluate_clustering(catdog_labels,catdog_birch_labels)
+# F.evaluate_clustering(catdog_labels,catdog_Kmeans_labels)
+# F.evaluate_clustering(catdog_labels,catdog_DBSCAN_labels)
+
+# # mnist
+
+# mnist_birch_labels,_=N.mnistBirch()
+# mnist_Kmeans_labels =F.mnist_Kmeans()
+# mnist_DBSCAN_labels =R.mnistDbscan()
+
+# F.evaluate_clustering(mnist_labels,mnist_birch_labels)
+# F.evaluate_clustering(mnist_labels,mnist_Kmeans_labels)
+# F.evaluate_clustering(mnist_labels,mnist_DBSCAN_labels)
 # F.evaluate_clustering(y_true=mnist_labels,y_pred=kMeans_mnist_labels)
 
 

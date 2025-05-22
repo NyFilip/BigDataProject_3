@@ -105,27 +105,27 @@ def tune_pca_kmeans(X, y_true, n_clusters, pca_range):
 # best_n, best_ari, best_labels = tune_pca_kmeans(images, labels, n_clusters=9, pca_range=range(5, 81, 5))
 
 
-castanddogs= dataSet.catdog('catdogdata.txt')[0]
-mnist= dataSet.mnist('numbers.txt')[0]
-labels=castanddogs[:,0]
-images=castanddogs[:,1:]
+# castanddogs= dataSet.catdog('catdogdata.txt')[0]
+# mnist= dataSet.mnist('numbers.txt')[0]
+# labels=castanddogs[:,0]
+# images=castanddogs[:,1:]
 
 
-best_n, best_ari, best_labels = tune_pca_kmeans(images, labels, n_clusters=2, pca_range=range(1, 200, 1))
-print(images.shape)
-X_var, selected_indices = Fkod.select_by_variance(images, threshold=0.000001)
-X_ftest=Fkod.FTestFeatureSelection(X_var,100)
-X_pca, pca_model = Fkod.select_by_pca(images, n_components=80)
+# best_n, best_ari, best_labels = tune_pca_kmeans(images, labels, n_clusters=2, pca_range=range(1, 200, 1))
+# print(images.shape)
+# X_var, selected_indices = Fkod.select_by_variance(images, threshold=0.000001)
+# X_ftest=Fkod.FTestFeatureSelection(X_var,100)
+# X_pca, pca_model = Fkod.select_by_pca(images, n_components=80)
 
 
-Y = tsne_embed(images, n_components=10, perplexity=40, n_iter=500)
+# Y = tsne_embed(images, n_components=10, perplexity=40, n_iter=500)
 
-# Quick scatter plot
-plt.scatter(Y[:, 0], Y[:, 1])
-plt.title("t-SNE Embedding of Flattened Images")
-plt.xlabel("Component 1")
-plt.ylabel("Component 2")
-plt.show()
+# # Quick scatter plot
+# plt.scatter(Y[:, 0], Y[:, 1])
+# plt.title("t-SNE Embedding of Flattened Images")
+# plt.xlabel("Component 1")
+# plt.ylabel("Component 2")
+# plt.show()
 
 
 
@@ -137,12 +137,12 @@ plt.show()
 
 
 # Assume images is your data matrix (samples x features)
-kmeans = KMeans(n_clusters=9, random_state=0)  # Set n_clusters as needed
-kmeans_labels = kmeans.fit_predict(Y)
+# kmeans = KMeans(n_clusters=9, random_state=0)  # Set n_clusters as needed
+# kmeans_labels = kmeans.fit_predict(Y)
 
-# Print cluster labels for each sample
-print("KMeans cluster labels:", kmeans_labels)
-print("trueLabels ", labels)
+# # Print cluster labels for each sample
+# print("KMeans cluster labels:", kmeans_labels)
+# print("trueLabels ", labels)
 
 # Optional: Visualize clusters if data is 2D or reduced to 2D
 # print(X_pca.shape[1])
@@ -154,6 +154,6 @@ print("trueLabels ", labels)
 #     plt.show()
 # Fkod.K_Elbow(X_pca)
 
-evaluate_clustering(labels,kmeans_labels)
+# evaluate_clustering(labels,kmeans_labels)
 
 
