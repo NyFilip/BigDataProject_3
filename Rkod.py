@@ -8,7 +8,9 @@ from sklearn.datasets import make_blobs
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import silhouette_score
 from itertools import product
-from Fkod import select_by_pca
+import Fkod as fk
+import dataSet as ds
+
 
 def plot_k_distance(data, k=5):
     # Plot k-distance (distance to k-th nearest neighbor) to help choose DBSCAN eps.
