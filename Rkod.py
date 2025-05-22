@@ -8,6 +8,7 @@ from sklearn.datasets import make_blobs
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import silhouette_score
 from itertools import product
+from Fkod import select_by_pca
 
 def plot_k_distance(data, k=5):
     # Plot k-distance (distance to k-th nearest neighbor) to help choose DBSCAN eps.
@@ -140,3 +141,15 @@ def auto_tune_dbscan(data, pca_range, eps_range, min_samples_range, labels_true=
             }
 
     return best_params
+
+def catdogDbscan():
+    cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
+    cdpca_X, _ = fk.select_by_pca(cdImagesList, 20)
+    cdPred = perform_dbscan(cdpca_X, eps=3.5, min_samples=4)
+    return cdPred
+
+def mnistDbscan():
+    mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
+    mpca_X, _ = fk.select_by_pca(mImagesList, 30)
+    mPred = perform_dbscan(mpca_X, eps=3.2, min_samples=2)
+    return mPred
