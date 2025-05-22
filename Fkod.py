@@ -45,7 +45,7 @@ def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', 
         plt.title(title)
         plt.grid(True)
         plt.tight_layout()
-        plt.show()
+
 
     return values
 
