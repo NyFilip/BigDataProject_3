@@ -146,11 +146,11 @@ def auto_tune_dbscan(data, pca_range, eps_range, min_samples_range, labels_true=
 def catdogDbscan():
     cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
     cdpca_X, _ = perform_pca(cdImagesList, 20)
-    cdPred = perform_dbscan(cdpca_X, eps=3.5, min_samples=4)
+    cdPred, cdComp = perform_dbscan(cdpca_X, eps=3.5, min_samples=4)
     return cdPred, cdComp
 
 def mnistDbscan():
     mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
     mpca_X, _ = perform_pca(mImagesList, 30)
-    mPred = perform_dbscan(mpca_X, eps=3.2, min_samples=2)
+    mPred, mComp = perform_dbscan(mpca_X, eps=3.2, min_samples=2)
     return mPred, mComp
