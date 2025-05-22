@@ -38,7 +38,7 @@ def catdogBirch():
     cdpca_X, cdpca = fk.select_by_pca(cdFtest, 12)
     cdPred, cdDist = birch(cdpca_X, 2, .1)
     truePredPlot(cdpca_X, cdLabels, cdDist, cdPred)
-    return cdFull
+    return cdPred, cdDist
 
 def mnistBirch():
     mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
@@ -46,5 +46,4 @@ def mnistBirch():
     mpca_X, mpca = fk.select_by_pca(mFtest, 12)
     mPred, mDist = birch(mpca_X, 9, 1.7)
     truePredPlot(mpca_X, mLabels, mDist, mPred)
-
-    return mFull
+    return mPred, Mdist
