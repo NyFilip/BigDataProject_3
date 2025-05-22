@@ -46,4 +46,4 @@ def mnistBirch():
     mpca_X, mpca = fk.select_by_pca(mFtest, 12)
     mPred, mDist = birch(mpca_X, 9, 1.7)
     truePredPlot(mpca_X, mLabels, mDist, mPred)
-    return mPred, Mdist
+    return mPred, mDist
