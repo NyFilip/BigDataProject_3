@@ -8,7 +8,6 @@ from sklearn.datasets import make_blobs
 from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import silhouette_score
 from itertools import product
-import Fkod as fk
 import dataSet as ds
 
 
@@ -146,12 +145,12 @@ def auto_tune_dbscan(data, pca_range, eps_range, min_samples_range, labels_true=
 
 def catdogDbscan():
     cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
-    cdpca_X, _ = fk.select_by_pca(cdImagesList, 20)
+    cdpca_X, _ = perform_pca(cdImagesList, 20)
     cdPred = perform_dbscan(cdpca_X, eps=3.5, min_samples=4)
     return cdPred
 
 def mnistDbscan():
     mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
-    mpca_X, _ = fk.select_by_pca(mImagesList, 30)
+    mpca_X, _ = perform_pca(mImagesList, 30)
     mPred = perform_dbscan(mpca_X, eps=3.2, min_samples=2)
     return mPred
