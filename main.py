@@ -25,7 +25,7 @@ def Find_number_of_classes(X_catdog,X_mnist):
     #Elbow score for catdog:
     CatdoG_Elbow = F.K_Elbow(X_catdog, k_range_Elbow, random_state=42, plot=True,title='Elbow method for CatDog',return_distortion=False)
     #Elbow score for mnist:
-    Mnist_Elbow = F.K_Elbow(X_mnist, k_range_Elbow, random_state=42, plot=True,title='Elbow method for MNIST',return_distortion=True)
+    Mnist_Elbow = F.K_Elbow(X_mnist, k_range_Elbow, random_state=42, plot=True,title='Elbow method for MNIST',return_distortion=False)
     #silhouette score for catdog:
     CatDog_Silhoutte = H.silhouette_kmeans_analysis(X_catdog, k_range_Silhoutte, title='Silhouette Score for CatDog', random_state=42, plot=True)
     #silhouette score for mnist:
@@ -36,7 +36,7 @@ def Find_number_of_classes(X_catdog,X_mnist):
     print("Elbow Score for MNIST: ", Mnist_Elbow)
 
 
-# Find_number_of_classes(X_catdog_PCA,X_mnist)
+Find_number_of_classes(X_catdog,X_mnist)
 
 #getting labels from classifiers.
 
