@@ -22,14 +22,14 @@ def truePredPlot(dataset, trueLabels, distance, prediction):
     ax[0].add_artist(legend1)
     ax[0].set_yticklabels([])
     ax[0].set_xticklabels([])
-    ax[0].set_title('Birch Clustering (True Labels)')
+    ax[0].set_title('True Labels')
 
     scatter2 = ax[1].scatter(dataset[:setLength,0], distance[:setLength,1], c=prediction[:setLength], marker='o')
     legend2 = ax[1].legend(*scatter2.legend_elements())
     ax[1].add_artist(legend2)
     ax[1].set_yticklabels([])
     ax[1].set_xticklabels([])
-    ax[1].set_title('Birch Clustering (Predicted Labels)')    
+    ax[1].set_title('Predicted Labels')    
     return
 
 def catdogBirch():

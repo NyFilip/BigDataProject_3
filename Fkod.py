@@ -6,7 +6,7 @@ from sklearn.feature_selection import VarianceThreshold, f_classif
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import dataSet as DS
-import FKladd as FK
+
 def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', plot=True, return_distortion=False):
     """
     Compute and optionally plot the inertia or distortion values for a range of k in KMeans.
@@ -45,7 +45,7 @@ def K_Elbow(images, k_range=range(1, 10), random_state=0, title='Elbow Method', 
         plt.title(title)
         plt.grid(True)
         plt.tight_layout()
-        plt.show()
+
 
     return values
 
@@ -173,7 +173,8 @@ def catdog_Kmeans():
     kmeans = KMeans(n_clusters=2, random_state=0)
 
     labels = kmeans.fit_predict(X_pca)
-    return labels
+    distance =kmeans.fit_transform(X_pca)
+    return labels,distance
 
 def mnist_Kmeans():
 
@@ -187,61 +188,51 @@ def mnist_Kmeans():
     kmeans = KMeans(n_clusters=9, random_state=0)
 
     labels = kmeans.fit_predict(X_pca)
-    return labels
+    distance =kmeans.fit_transform(X_pca)
+    return labels, distance
 
-def visualize_tsne(X, y, pca_components=50, tsne_components=2, perplexity=30, random_state=42):
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+
+def visualize_clusters(X, labels, pca_components=50, perplexity=30, learning_rate=200, random_state=42):
     """
-    Visualize data using PCA (for initial reduction) followed by t-SNE, colored by true labels.
+    Scales data, reduces with PCA, applies t-SNE, and visualizes 2D clusters.
 
     Parameters:
-        X (ndarray): Data matrix (samples x features)
-        y (ndarray): True labels
-        pca_components (int): Number of PCA components to keep before t-SNE
-        tsne_components (int): Number of t-SNE output dimensions (usually 2)
-        perplexity (float): t-SNE perplexity parameter
-        random_state (int): Random seed for reproducibility
+    - X: ndarray of shape (n_samples, n_features), e.g. flattened images
+    - labels: ndarray of shape (n_samples,), e.g. cluster labels
+    - pca_components: number of PCA components (default: 50)
+    - perplexity: t-SNE perplexity (default: 30)
+    - learning_rate: t-SNE learning rate (default: 200)
+    - random_state: for reproducibility (default: 42)
     """
-    from sklearn.decomposition import PCA
-    from sklearn.manifold import TSNE
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import matplotlib
+    print("[1/4] Scaling...")
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
-    # Step 1: PCA reduction
+    print("[2/4] Reducing dimensions with PCA...")
     pca = PCA(n_components=pca_components, random_state=random_state)
-    X_pca = pca.fit_transform(X)
+    X_pca = pca.fit_transform(X_scaled)
 
-    # Step 2: t-SNE reduction
-    tsne = TSNE(n_components=tsne_components, perplexity=perplexity, random_state=random_state)
+    print("[3/4] Applying t-SNE...")
+    tsne = TSNE(n_components=2, perplexity=perplexity,
+                learning_rate=learning_rate, random_state=random_state)
     X_tsne = tsne.fit_transform(X_pca)
 
-    # Step 3: Prepare colors for unique labels
-    unique_labels = np.unique(y)
-    n_labels = len(unique_labels)
-    # Use tab10 or tab20 if possible, otherwise use hsv
-    if n_labels <= 10:
-        cmap = plt.get_cmap('tab10', n_labels)
-    elif n_labels <= 20:
-        cmap = plt.get_cmap('tab20', n_labels)
-    else:
-        cmap = plt.get_cmap('hsv', n_labels)
-
-    # Step 4: Scatter plot
+    print("[4/4] Plotting...")
     plt.figure(figsize=(8, 6))
-    scatter = plt.scatter(
-        X_tsne[:, 0], X_tsne[:, 1],
-        c=y, cmap=cmap, s=40, alpha=0.8
-    )
-    plt.title("t-SNE visualization (after PCA)")
+    scatter = plt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=labels, cmap='tab10', s=40, alpha=0.7)
+    plt.title("t-SNE Visualization of Clusters")
     plt.xlabel("t-SNE 1")
     plt.ylabel("t-SNE 2")
-    cbar = plt.colorbar(scatter, ticks=range(n_labels))
-    cbar.set_label("True Label")
-    cbar.set_ticks(range(n_labels))
-    cbar.set_ticklabels(unique_labels)
+    plt.colorbar(scatter, label="Cluster")
+    plt.grid(True)
     plt.tight_layout()
     plt.show()
 
 
 
-    
+
