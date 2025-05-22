@@ -21,7 +21,7 @@ if __name__ == '__main__':
     
     mSil = re.evaluate_clustering(mFull[:,1:], mPred, mLabels)
     cdSil = re.evaluate_clustering(cdFull[:,1:], cdPred, cdLabels)
-    
+    na.truePredPlot(mFull[:,1:], mLabels, mDist, mPred)
     print(f'{mSil=}')
     print(f'{cdSil=}')
 
