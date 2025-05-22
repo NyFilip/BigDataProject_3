@@ -12,7 +12,7 @@ np.set_printoptions(threshold=np.inf)
 
 
 if __name__ == '__main__':
-    cdFull = na.catdogBirch()
-    mFull = na.mnistBirch()
+    na.catdogBirch()
+    na.mnistBirch()
 
     plt.show()
