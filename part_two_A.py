@@ -15,6 +15,7 @@ n_clusters = 10
 n_features = 50  # High dimensional like MNIST
 n_samples_full = 5000
 sample_sizes = [5000, 2500, 1000, 500, 250, 100, 50]
+n_runs = 5  # Number of runs for error estimation
 
 # --- Generate synthetic MNIST-like data ---
 X_full, y_true_full = make_blobs(
@@ -39,48 +40,56 @@ plt.tight_layout()
 plt.savefig("part_two/MNIST.png", bbox_inches="tight")
 plt.show()
 
-# --- Storage for clustering results ---
-results = {alg: {'ari': [], 'silhouette': [], 'n_clusters': []} for alg in ['KMeans', 'DBSCAN', 'Birch']}
+# --- Storage for clustering results (now stores lists of lists) ---
+results = {
+    alg: {
+        'ari': [[] for _ in sample_sizes],
+        'silhouette': [[] for _ in sample_sizes],
+        'n_clusters': [[] for _ in sample_sizes]
+    }
+    for alg in ['KMeans', 'DBSCAN', 'Birch']
+}
 
-# --- Loop over different sample sizes ---
-for size in sample_sizes:
-    # Balanced sampling: equal from each cluster
-    idx = []
-    for c in range(n_clusters):
-        c_idx = np.where(y_true_full == c)[0]
-        idx.extend(np.random.choice(c_idx, size // n_clusters, replace=False))
-    X = X_full[idx]
-    y_true = y_true_full[idx]
+# --- Loop over different sample sizes and runs ---
+for run in range(n_runs):
+    for i, size in enumerate(sample_sizes):
+        # Balanced sampling: equal from each cluster
+        idx = []
+        for c in range(n_clusters):
+            c_idx = np.where(y_true_full == c)[0]
+            idx.extend(np.random.choice(c_idx, size // n_clusters, replace=False))
+        X = X_full[idx]
+        y_true = y_true_full[idx]
 
-    # --- KMeans ---
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-    y_kmeans = kmeans.fit_predict(X)
-    results['KMeans']['ari'].append(adjusted_rand_score(y_true, y_kmeans))
-    results['KMeans']['silhouette'].append(silhouette_score(X, y_kmeans))
-    results['KMeans']['n_clusters'].append(len(np.unique(y_kmeans)))
+        # --- KMeans ---
+        kmeans = KMeans(n_clusters=n_clusters, random_state=None)
+        y_kmeans = kmeans.fit_predict(X)
+        results['KMeans']['ari'][i].append(adjusted_rand_score(y_true, y_kmeans))
+        results['KMeans']['silhouette'][i].append(silhouette_score(X, y_kmeans))
+        results['KMeans']['n_clusters'][i].append(len(np.unique(y_kmeans)))
 
-    # --- DBSCAN ---
-    dbscan = DBSCAN(eps=4.5, min_samples=5)  # eps may need tuning
-    y_dbscan = dbscan.fit_predict(X)
-    mask = y_dbscan != -1
-    if np.unique(y_dbscan[mask]).size > 1:
-        sil = silhouette_score(X[mask], y_dbscan[mask])
-        ari = adjusted_rand_score(y_true[mask], y_dbscan[mask])
-    else:
-        sil = np.nan
-        ari = np.nan
-    results['DBSCAN']['ari'].append(ari)
-    results['DBSCAN']['silhouette'].append(sil)
-    results['DBSCAN']['n_clusters'].append(len(set(y_dbscan)) - (1 if -1 in y_dbscan else 0))
+        # --- DBSCAN ---
+        dbscan = DBSCAN(eps=4.5, min_samples=5)
+        y_dbscan = dbscan.fit_predict(X)
+        mask = y_dbscan != -1
+        if np.unique(y_dbscan[mask]).size > 1:
+            sil = silhouette_score(X[mask], y_dbscan[mask])
+            ari = adjusted_rand_score(y_true[mask], y_dbscan[mask])
+        else:
+            sil = np.nan
+            ari = np.nan
+        results['DBSCAN']['ari'][i].append(ari)
+        results['DBSCAN']['silhouette'][i].append(sil)
+        results['DBSCAN']['n_clusters'][i].append(len(set(y_dbscan)) - (1 if -1 in y_dbscan else 0))
 
-    # --- Birch ---
-    birch = Birch(n_clusters=n_clusters)
-    y_birch = birch.fit_predict(X)
-    results['Birch']['ari'].append(adjusted_rand_score(y_true, y_birch))
-    results['Birch']['silhouette'].append(silhouette_score(X, y_birch))
-    results['Birch']['n_clusters'].append(len(np.unique(y_birch)))
+        # --- Birch ---
+        birch = Birch(n_clusters=n_clusters)
+        y_birch = birch.fit_predict(X)
+        results['Birch']['ari'][i].append(adjusted_rand_score(y_true, y_birch))
+        results['Birch']['silhouette'][i].append(silhouette_score(X, y_birch))
+        results['Birch']['n_clusters'][i].append(len(np.unique(y_birch)))
 
-# --- Plot clustering results across sample sizes (separate images, high quality) ---
+# --- Plot clustering results with error bars ---
 colors = {'KMeans': 'tab:orange', 'DBSCAN': 'tab:blue', 'Birch': 'tab:green'}
 markers = {'KMeans': 's', 'DBSCAN': 'o', 'Birch': '^'}
 metrics = ['ari', 'silhouette', 'n_clusters']
@@ -88,15 +97,18 @@ metrics = ['ari', 'silhouette', 'n_clusters']
 for metric in metrics:
     plt.figure(figsize=(7, 5))
     for alg in results:
-        y = results[alg][metric]
-        plt.plot(
-            sample_sizes, y,
-            marker=markers[alg], color=colors[alg], label=alg, linewidth=2, markersize=8
+        vals = np.array(results[alg][metric], dtype=np.float64)  # shape: (len(sample_sizes), n_runs)
+        means = np.nanmean(vals, axis=1)
+        stds = np.nanstd(vals, axis=1)
+        plt.errorbar(
+            sample_sizes, means, yerr=stds,
+            marker=markers[alg], color=colors[alg], label=alg,
+            linewidth=2, markersize=8, capsize=5
         )
-        plt.scatter(sample_sizes, y, color=colors[alg], marker=markers[alg], s=80)
+        plt.scatter(sample_sizes, means, color=colors[alg], marker=markers[alg], s=80)
     plt.xlabel('Sample Size')
     plt.ylabel(metric.replace('_', ' ').title())
-    plt.title(f"{metric.replace('_', ' ').title()} vs Sample Size")
+    plt.title(f"{metric.replace('_', ' ').title()} vs Sample Size (mean ± std)")
     plt.xscale('log')
     plt.grid(True, linestyle='--', alpha=0.6)
     if metric == 'ari':
