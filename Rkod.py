@@ -31,7 +31,7 @@ def plot_k_distance(data, k=5):
 def perform_dbscan(data, eps, min_samples=5):
     data_scaled = StandardScaler().fit_transform(data)
     db = DBSCAN(eps=eps, min_samples=min_samples).fit(data_scaled)
-    return db.labels_
+    return db.labels_, db.components_
 
 def plot_clusters(data, labels, title):
     plt.figure(figsize=(6, 4))
@@ -147,10 +147,10 @@ def catdogDbscan():
     cdFull, cdLabels, cdImagesMatrix, cdImagesList = ds.catdog()
     cdpca_X, _ = perform_pca(cdImagesList, 20)
     cdPred = perform_dbscan(cdpca_X, eps=3.5, min_samples=4)
-    return cdPred
+    return cdPred, cdComp
 
 def mnistDbscan():
     mFull, mLabels, mImagesMatrix, mImagesList = ds.mnist()
     mpca_X, _ = perform_pca(mImagesList, 30)
     mPred = perform_dbscan(mpca_X, eps=3.2, min_samples=2)
-    return mPred
+    return mPred, mComp
